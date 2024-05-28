@@ -68,11 +68,10 @@ CREATE TABLE Prenotazioni (
     FOREIGN KEY (FlightID) REFERENCES Voli(FlightID)
 );
 
-CREATE TABLE Equipaggio (
-    CrewID INT PRIMARY KEY,
+CREATE TABLE Personale (
+    ID INT PRIMARY KEY,
     Nome VARCHAR(255),
     Cognome VARCHAR(255),
-    Ruolo VARCHAR(255),
     CompagniaAereaID INT,
     FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID)
 );
