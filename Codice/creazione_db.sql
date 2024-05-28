@@ -36,18 +36,21 @@ CREATE TABLE Voli (
     DataOraPartenza TIMESTAMP,
     DataOraArrivo TIMESTAMP,
     AeroportoPartenzaID INT,
+    TerminalPartenza VARCHAR(10),
+    NumeroGatePartenza INT,
     AeroportoArrivoID INT,
+    TerminalArrivo VARCHAR(10),
+    NumeroGateArrivo INT,
     CompagniaAereaID INT,
     AircraftID VARCHAR(6),
-    GatePartenzaID INT,
-    GateArrivoID INT,
     FOREIGN KEY (AeroportoPartenzaID) REFERENCES Aeroporti(AirportID),
     FOREIGN KEY (AeroportoArrivoID) REFERENCES Aeroporti(AirportID),
     FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID),
     FOREIGN KEY (AircraftID) REFERENCES Aerei(AircraftID),
-    FOREIGN KEY (GatePartenzaID) REFERENCES Gates(GateID),
-    FOREIGN KEY (GateArrivoID) REFERENCES Gates(GateID)
+    FOREIGN KEY (AeroportoPartenzaID, TerminalPartenza, NumeroGatePartenza) REFERENCES Gates(ID_aeroporto, Terminal, Numero),
+    FOREIGN KEY (AeroportoArrivoID, TerminalArrivo, NumeroGateArrivo) REFERENCES Gates(ID_aeroporto, Terminal, Numero)
 );
+
 
 CREATE TABLE Passeggeri (
     PasseggeroID INT PRIMARY KEY,
