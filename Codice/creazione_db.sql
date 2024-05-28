@@ -77,6 +77,21 @@ CREATE TABLE Equipaggio (
     FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID)
 );
 
+
+CREATE TABLE Piloti (
+    ID INT PRIMARY KEY,
+    OreDiVolo INT,
+    Ruolo VARCHAR(255) CHECK (Ruolo IN ('Comandante', 'Primo ufficiale')),
+    FOREIGN KEY (ID) REFERENCES Personale(ID)
+);
+
+CREATE TABLE AssistentiDiVolo (
+    ID INT PRIMARY KEY,
+    Anzianità INT,
+    FOREIGN KEY (ID) REFERENCES Personale(ID)
+);
+
+
 CREATE TABLE AssegnazioneEquipaggio (
     AssignmentID INT PRIMARY KEY,
     FlightID INT,
