@@ -1,4 +1,4 @@
--- QUERY 1: Numero di voli per ciascuna compagnia aerea
+-- QUERY 1: Numero totale di passeggeri ospitati da ciascuna compagnia aerea
 SELECT 
     ca.Nome AS CompagniaAerea,
     COUNT(p.PasseggeroID) AS NumeroTotalePasseggeri
@@ -14,8 +14,6 @@ GROUP BY
     ca.Nome
 ORDER BY 
     NumeroTotalePasseggeri DESC;
-
-
 
 
 -- QUERY 2:  Piloti che hanno pilotato un Airbus A380
@@ -47,16 +45,27 @@ ORDER BY
 
 
 
--- QUERY 3:  Prezzo medio dei biglietti per ogni classe di volo
+-- QUERY 3:  Assistenti di volo che si sono imbarcati su un Boeing 787 da Malpensa
 SELECT 
-    p.Classe, 
-    AVG(p.Prezzo) AS PrezzoMedio
+    adf.ID AS AssistenteDiVoloID,
+    p.Nome,
+    p.Cognome
 FROM 
-    Prenotazioni p
-GROUP BY 
-    p.Classe
-ORDER BY 
-    PrezzoMedio DESC;
+    AssistentiDiVolo adf
+JOIN 
+    Personale p ON adf.ID = p.ID
+JOIN 
+    AssegnazioneEquipaggio ae ON adf.ID = ae.CrewID
+JOIN 
+    Voli v ON ae.FlightID = v.FlightID
+JOIN 
+    Aerei a ON v.AircraftID = a.AircraftID
+JOIN 
+    Aeroporti ap ON v.AeroportoPartenzaID = ap.AirportID
+WHERE 
+    a.Modello = 'Boeing 787'
+    AND ap.Nome = 'Aeroporto di Milano-Malpensa';
+
 
 
 
