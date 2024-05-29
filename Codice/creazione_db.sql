@@ -1,103 +1,111 @@
-CREATE TABLE Aeroporti (
-    AirportID INT PRIMARY KEY,
-    Nome VARCHAR(255),
-    Città VARCHAR(255),
-    Stato VARCHAR(255),
-    CodiceICAO VARCHAR(4),
-    CodiceIATA VARCHAR(3)
-);
-CREATE TABLE CompagnieAeree (
-    AirlineID INT PRIMARY KEY,
-    Nome VARCHAR(255),
-    CodiceIATA VARCHAR(3),
-    CodiceICAO VARCHAR(4),
-    Stato VARCHAR(255)
+-- Creazione della tabella Aeroporto
+CREATE TABLE Aeroporto (
+    ICAO CHAR(4) NOT NULL PRIMARY KEY,
+    IATA CHAR(3) NOT NULL,
+    Nome VARCHAR(100) NOT NULL,
+    Città VARCHAR(100) NOT NULL,
+    Stato VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE Aerei (
-    AircraftID VARCHAR(6) PRIMARY KEY,
-    Modello VARCHAR(255),
-    Costruttore VARCHAR(255),
+-- Creazione della tabella CompagniaAerea
+CREATE TABLE CompagniaAerea (
+    ICAO CHAR(4) NOT NULL PRIMARY KEY,
+    IATA CHAR(3) NOT NULL,
+    Nome VARCHAR(100) NOT NULL,
+    Stato VARCHAR(100)
+);
+
+-- Creazione della tabella Aeromobile
+CREATE TABLE Aeromobile (
+    ID VARCHAR(6) NOT NULL PRIMARY KEY,
+    Modello VARCHAR(50) NOT NULL,
+    Costruttore VARCHAR(50) NOT NULL,
     Capacità INT,
-    CompagniaAereaID INT,
-    FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID)
-);
-CREATE TABLE Gates (
-    GateID INT PRIMARY KEY,
-    Terminal VARCHAR(255),
-    Numero INT,
-    AirportID INT,
-    FOREIGN KEY (AirportID) REFERENCES Aeroporti(AirportID)
+    CompagniaICAO CHAR(4) NOT NULL,
+    FOREIGN KEY (CompagniaICAO) REFERENCES CompagniaAerea(ICAO)
 );
 
-CREATE TABLE Voli (
-    FlightID INT PRIMARY KEY,
-    NumeroVolo VARCHAR(255),
-    DataOraPartenza TIMESTAMP,
-    DataOraArrivo TIMESTAMP,
-    AeroportoPartenzaID INT,
+-- Creazione della tabella Gate
+CREATE TABLE Gate (
+    AeroportoICAO CHAR(4) NOT NULL,
+    Terminal VARCHAR(10) NOT NULL,
+    Numero INT NOT NULL,
+    PRIMARY KEY (AeroportoICAO, Terminal, Numero),
+    FOREIGN KEY (AeroportoICAO) REFERENCES Aeroporto(ICAO)
+);
+
+-- Creazione della tabella Passeggero
+CREATE TABLE Passeggero (
+    ID INT NOT NULL PRIMARY KEY,
+    Nome VARCHAR(100),
+    Cognome VARCHAR(100),
+    Nazionalità VARCHAR(50),
+    DataDiNascita DATE
+);
+
+-- Creazione della tabella Volo
+CREATE TABLE Volo (
+    NumeroVolo VARCHAR(255) NOT NULL,
+    DataOraPartenza TIMESTAMP NOT NULL,
+    DataOraArrivo TIMESTAMP NOT NULL,
+    AeroportoPartenzaICAO CHAR(4) NOT NULL,
+    AeroportoArrivoICAO CHAR(4) NOT NULL,
+    CompagniaICAO CHAR(4) NOT NULL,
+    AircraftID VARCHAR(6) NOT NULL,
     TerminalPartenza VARCHAR(10),
-    NumeroGatePartenza INT,
-    AeroportoArrivoID INT,
+    NumeroGatePartenza INT NOT NULL,
     TerminalArrivo VARCHAR(10),
-    NumeroGateArrivo INT,
-    CompagniaAereaID INT,
-    AircraftID VARCHAR(6),
-    FOREIGN KEY (AeroportoPartenzaID) REFERENCES Aeroporti(AirportID),
-    FOREIGN KEY (AeroportoArrivoID) REFERENCES Aeroporti(AirportID),
-    FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID),
-    FOREIGN KEY (AircraftID) REFERENCES Aerei(AircraftID),
-    FOREIGN KEY (AeroportoPartenzaID, TerminalPartenza, NumeroGatePartenza) REFERENCES Gates(ID_aeroporto, Terminal, Numero),
-    FOREIGN KEY (AeroportoArrivoID, TerminalArrivo, NumeroGateArrivo) REFERENCES Gates(ID_aeroporto, Terminal, Numero)
+    NumeroGateArrivo INT NOT NULL,
+    PRIMARY KEY (NumeroVolo, DataOraPartenza),
+    FOREIGN KEY (AeroportoPartenzaICAO) REFERENCES Aeroporto(ICAO),
+    FOREIGN KEY (AeroportoArrivoICAO) REFERENCES Aeroporto(ICAO),
+    FOREIGN KEY (CompagniaICAO) REFERENCES CompagniaAerea(ICAO),
+    FOREIGN KEY (AircraftID) REFERENCES Aeromobile(ID),
+    FOREIGN KEY (AeroportoPartenzaICAO, TerminalPartenza, NumeroGatePartenza) REFERENCES Gate(AeroportoICAO, Terminal, Numero),
+    FOREIGN KEY (AeroportoArrivoICAO, TerminalArrivo, NumeroGateArrivo) REFERENCES Gate(AeroportoICAO, Terminal, Numero)
 );
 
-
-CREATE TABLE Passeggeri (
-    PasseggeroID INT PRIMARY KEY,
-    Nome VARCHAR(255),
-    Cognome VARCHAR(255),
-    DataDiNascita DATE,
-    Nazionalità VARCHAR(255),
-    DocumentoIdentità VARCHAR(255)
-);
-
-CREATE TABLE Prenotazioni (
-    NumeroBiglietto VARCHAR(255) PRIMARY KEY,
+-- Creazione della tabella Prenotazione
+CREATE TABLE Prenotazione (
+    Numero VARCHAR(50) NOT NULL PRIMARY KEY,
     PasseggeroID INT,
-    FlightID INT,
-    Classe VARCHAR(255),
+    NumeroVolo VARCHAR(255) NOT NULL,
+    DataVolo TIMESTAMP NOT NULL,
+    Classe VARCHAR(10),
     Prezzo DECIMAL(10, 2),
-    FOREIGN KEY (PasseggeroID) REFERENCES Passeggeri(PasseggeroID),
-    FOREIGN KEY (FlightID) REFERENCES Voli(FlightID)
+    FOREIGN KEY (PasseggeroID) REFERENCES Passeggero(ID),
+    FOREIGN KEY (NumeroVolo, DataVolo) REFERENCES Volo(NumeroVolo, DataOraPartenza)
 );
 
+-- Creazione della tabella Personale
 CREATE TABLE Personale (
-    ID INT PRIMARY KEY,
-    Nome VARCHAR(255),
-    Cognome VARCHAR(255),
-    CompagniaAereaID INT,
-    FOREIGN KEY (CompagniaAereaID) REFERENCES CompagnieAeree(AirlineID)
+    ID INT NOT NULL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Cognome VARCHAR(100) NOT NULL,
+    CompagniaICAO CHAR(4) NOT NULL,
+    FOREIGN KEY (CompagniaICAO) REFERENCES CompagniaAerea(ICAO)
 );
 
-
+-- Creazione della tabella Piloti
 CREATE TABLE Piloti (
-    ID INT PRIMARY KEY,
-    OreDiVolo INT,
-    Ruolo VARCHAR(255) CHECK (Ruolo IN ('Comandante', 'Primo ufficiale')),
+    ID INT NOT NULL PRIMARY KEY,
+    Ruolo VARCHAR(50) NOT NULL,
     FOREIGN KEY (ID) REFERENCES Personale(ID)
 );
 
+-- Creazione della tabella AssistentiDiVolo
 CREATE TABLE AssistentiDiVolo (
-    ID INT PRIMARY KEY,
+    ID INT NOT NULL PRIMARY KEY,
     Anzianità INT,
     FOREIGN KEY (ID) REFERENCES Personale(ID)
 );
 
-
+-- Creazione della tabella AssegnazioneEquipaggio con chiave primaria composta
 CREATE TABLE AssegnazioneEquipaggio (
-    AssignmentID INT PRIMARY KEY,
-    FlightID INT,
-    CrewID INT,
-    FOREIGN KEY (FlightID) REFERENCES Voli(FlightID),
-    FOREIGN KEY (CrewID) REFERENCES Equipaggio(CrewID)
+    DataVolo TIMESTAMP NOT NULL,
+    NumeroVolo VARCHAR(255) NOT NULL,
+    PersonaleID INT NOT NULL,
+    PRIMARY KEY (DataVolo, NumeroVolo, PersonaleID),
+    FOREIGN KEY (NumeroVolo, DataVolo) REFERENCES Volo(NumeroVolo, DataOraPartenza),
+    FOREIGN KEY (PersonaleID) REFERENCES Personale(ID)
 );
