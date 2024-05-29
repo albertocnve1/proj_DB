@@ -17,14 +17,14 @@ GROUP BY v.NumeroVolo, v.DataOraPartenza;
 
 
 
--- QUERY 3: Nomi e cognomi dei piloti che hanno pilotato un Airbus A380
+-- QUERY 3: Nomi e cognomi dei piloti che hanno pilotato un Airbus A320
 SELECT p.Nome, p.Cognome
 FROM Piloti pi
 JOIN Personale p ON pi.ID = p.ID
 JOIN AssegnazioneEquipaggio ae ON pi.ID = ae.PersonaleID
 JOIN Volo v ON ae.NumeroVolo = v.NumeroVolo AND ae.DataVolo = v.DataOraPartenza
 JOIN Aeromobile a ON v.AircraftID = a.ID
-WHERE a.Modello = 'A380'
+WHERE a.Modello = 'A320'
 GROUP BY p.Nome, p.Cognome;
 
 
