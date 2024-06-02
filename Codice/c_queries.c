@@ -93,7 +93,7 @@ const char *QUERY5 = "SELECT DISTINCT p.Nome, p.Cognome "
                      "FROM AssistentiDiVolo adv "
                      "JOIN Personale p ON adv.ID = p.ID "
                      "JOIN AssegnazioneEquipaggio ae ON adv.ID = ae.PersonaleID "
-                     "JOIN Volo v ON ae.NumeroVolo = v.NumeroVolo AND ae.DataOraPartenza = v.DataOraPartenza "
+                     "JOIN Volo v ON ae.NumeroVolo = v.NumeroVolo AND ae.DataVolo = v.DataOraPartenza "
                      "WHERE v.AeroportoPartenzaICAO = 'LIPZ' OR v.AeroportoArrivoICAO = 'LIPZ';";
 
 int main() {
